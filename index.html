@@ -1,1 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bug Report</title>
 
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #07182e;
+  font-family: Arial;
+  color: white;
+}
+
+.container {
+  width: 400px;
+  background: #0d2342;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+input, textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #132d52;
+  color: white;
+}
+
+textarea {
+  height: 120px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.status {
+  text-align: center;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2 style="text-align:center;">Report a Bug</h2>
+
+  <input id="discordId" placeholder="Discord ID">
+  <textarea id="bugReport" placeholder="Describe the bug"></textarea>
+
+  <button onclick="sendBug()">Submit</button>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+
+const API_URL = "https://cool-mode-8617.contact-me-for-question.workers.dev";
+
+async function sendBug() {
+
+  const discordId = document.getElementById("discordId").value.trim();
+  const bugReport = document.getElementById("bugReport").value.trim();
+  const status = document.getElementById("status");
+
+  if (!discordId || !bugReport) {
+    status.textContent = "Fill all fields.";
+    status.style.color = "red";
+    return;
+  }
+
+  try {
+
+    const res = await fetch(`${API_URL}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        discordId,
+        bugReport
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      status.textContent = "Bug sent successfully!";
+      status.style.color = "lime";
+
+      document.getElementById("discordId").value = "";
+      document.getElementById("bugReport").value = "";
+    } else {
+      status.textContent = data.error || "Failed.";
+      status.style.color = "red";
+    }
+
+  } catch (err) {
+    status.textContent = "Network error.";
+    status.style.color = "red";
+  }
+}
+
+</script>
+
+</body>
+</html>
